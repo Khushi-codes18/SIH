@@ -1,0 +1,1758 @@
+import { 
+  ResourceItem, 
+  HistoricalFloodEvent, 
+  VillageWardData, 
+  DigitalTwinSimStep,
+  LanguageCode
+} from '../types';
+
+// ==========================================
+// 1. MULTILINGUAL TRANSLATION DICTIONARY
+// ==========================================
+export const TRANSLATIONS_DICT: Record<LanguageCode, Record<string, string>> = {
+  en: {
+    brand_title: "Hydro Vision",
+    brand_subtitle: "AI Flood & Weather Intelligence",
+    nav_home: "Home",
+    nav_live_map: "Live Map",
+    nav_alerts: "Alerts",
+    nav_forecast: "Forecast",
+    nav_digital_twin: "Digital Twin",
+    nav_history: "Historical Timeline",
+    nav_resources: "Resources (53)",
+    nav_admin: "Admin Control",
+    nav_about: "About Us",
+    persona_citizen: "Citizen Mode",
+    persona_authority: "Authority Mode",
+    sos_button: "SOS Emergency",
+    safe_to_drive: "Safe to Drive",
+    caution_drive: "Drive with Caution",
+    dangerous_drive: "Do Not Drive",
+    nearest_shelter: "Nearest Safe Shelter",
+    recommended_route: "Recommended Safe Route",
+    danger_near_you: "DANGER NEAR YOU",
+    area_safe: "Your Area is Safe",
+    be_alert: "Be Alert & Monitor",
+    move_to_safety: "Prepare to Move to Safety",
+    system_operational: "System Operational",
+    live_stream: "Live CWC/IMD Satellite Feed",
+    search_placeholder: "Search village, ward, district, or river station...",
+    call_emergency: "Call Emergency (112)",
+    call_ndrf: "Call NDRF (1078)",
+    weather_clear: "Normal / No Rain",
+    weather_drizzle: "Light Drizzle",
+    weather_heavy: "Heavy Rainfall",
+    weather_critical: "Torrential Rain & Surge",
+    demo_data_notice: "SIH-2026 Prototype • Simulated & CWC Telemetry",
+  },
+  hi: {
+    brand_title: "हाइड्रो विज़न",
+    brand_subtitle: "एआई बाढ़ एवं मौसम पूर्व चेतावनी प्रणाली",
+    nav_home: "मुख्य पृष्ठ",
+    nav_live_map: "लाइव नक्शा",
+    nav_alerts: "चेतावनी",
+    nav_forecast: "पूर्वानुमान",
+    nav_digital_twin: "डिजिटल ट्विन",
+    nav_history: "ऐतिहासिक सत्यापन",
+    nav_resources: "संसाधन (53)",
+    nav_admin: "प्रशासन नियंत्रण",
+    nav_about: "हमारे बारे में",
+    persona_citizen: "नागरिक मोड",
+    persona_authority: "प्राधिकरण मोड",
+    sos_button: "आपातकालीन एसओएस",
+    safe_to_drive: "गाड़ी चलाना सुरक्षित",
+    caution_drive: "सावधानी से चलाएं",
+    dangerous_drive: "सड़क पर न निकलें",
+    nearest_shelter: "निकटतम सुरक्षित आश्रय",
+    recommended_route: "अनुशंसित सुरक्षित मार्ग",
+    danger_near_you: "आपके पास बाढ़ का खतरा",
+    area_safe: "आपका क्षेत्र सुरक्षित है",
+    be_alert: "सतर्क रहें और नजर रखें",
+    move_to_safety: "सुरक्षित स्थान जाने की तैयारी करें",
+    system_operational: "प्रणाली सक्रिय है",
+    live_stream: "लाइव सीडब्ल्यूसी / मौसम उपग्रह फीड",
+    search_placeholder: "गाँव, वार्ड, जिला या नदी स्टेशन खोजें...",
+    call_emergency: "आपातकालीन कॉल (112)",
+    call_ndrf: "एनडीआरएफ कॉल (1078)",
+    weather_clear: "सामान्य / कोई वर्षा नहीं",
+    weather_drizzle: "हल्की बूंदाबांदी",
+    weather_heavy: "भारी बारिश",
+    weather_critical: "मूसलाधार बारिश और बाढ़ खतरा",
+    demo_data_notice: "एसआईएच-2026 प्रोटोटाइप • सिम्युलेटेड व वास्तविक टेलीमेट्री",
+  },
+  bn: {
+    brand_title: "হাইড্রো ভিশন",
+    brand_subtitle: "এআই বন্যা পূর্বাভাস ও দুর্যোগ সতর্কতা",
+    nav_home: "হোম",
+    nav_live_map: "লাইভ ম্যাপ",
+    nav_alerts: "সতর্কতা",
+    nav_forecast: "পূর্বাভাস",
+    nav_digital_twin: "ডিজিটাল টুইন",
+    nav_history: "ঐতিহাসিক যাচাই",
+    nav_resources: "রিসোর্স (53)",
+    nav_admin: "প্রশাসন ড্যাশবোর্ড",
+    nav_about: "পরিচিতি",
+    persona_citizen: "নাগরিক মোড",
+    persona_authority: "কর্তৃপক্ষ মোড",
+    sos_button: "জরুরী এসওএস",
+    safe_to_drive: "ড্রাইভ নিরাপদ",
+    caution_drive: "সতর্ক থাকুন",
+    dangerous_drive: "গাড়ি চালাবেন না",
+    nearest_shelter: "নিকটবর্তী আশ্রয়কেন্দ্র",
+    recommended_route: "নিরাপদ পথ",
+    danger_near_you: "কাছেই বিপদের ঝুঁকি",
+    area_safe: "আপনার এলাকা নিরাপদ",
+    be_alert: "সতর্ক থাকুন",
+    move_to_safety: "নিরাপদে সরে যান",
+    system_operational: "সিস্টেম চালু আছে",
+    live_stream: "লাইভ উপগ্রহ ডেটা",
+    search_placeholder: "গ্রাম বা জেলা সন্ধান করুন...",
+    call_emergency: "জরুরী ডায়াল (112)",
+    call_ndrf: "এনডিআরএফ ডায়াল (1078)",
+    weather_clear: "স্বাভাবিক আবহাওয়া",
+    weather_drizzle: "হালকা বৃষ্টি",
+    weather_heavy: "ভারী বৃষ্টি",
+    weather_critical: "অতি ভারী প্লাবন",
+    demo_data_notice: "এসআইএইচ ২০২৬ প্রোটোটাইপ",
+  },
+  ta: {
+    brand_title: "ஹைட்ரோ விஷன்",
+    brand_subtitle: "AI வெள்ள முன்னெச்சரிக்கை அமைப்பு",
+    nav_home: "முகப்பு",
+    nav_live_map: "நேரலை வரைபடம்",
+    nav_alerts: "எச்சரிக்கைகள்",
+    nav_forecast: "வானிலை கணிப்பு",
+    nav_digital_twin: "டிஜிட்டல் இரட்டை",
+    nav_history: "வரலாற்று சரிபார்ப்பு",
+    nav_resources: "வளங்கள் (53)",
+    nav_admin: "நிர்வாகக் கட்டுப்பாடு",
+    nav_about: "பற்றி",
+    persona_citizen: "குடிமக்கள் முறை",
+    persona_authority: "அதிகாரிகள் முறை",
+    sos_button: "அவசர SOS",
+    safe_to_drive: "பயணம் பாதுகாப்பானது",
+    caution_drive: "கவனமாக ஓட்டவும்",
+    dangerous_drive: "பயணிக்க வேண்டாம்",
+    nearest_shelter: "அருகிலுள்ள புகலிடம்",
+    recommended_route: "பரிந்துரைக்கப்பட்ட பாதை",
+    danger_near_you: "அபாய எச்சரிக்கை",
+    area_safe: "பகுதி பாதுகாப்பானது",
+    be_alert: "விழிப்புடன் இருக்கவும்",
+    move_to_safety: "பாதுகாப்பான இடத்திற்கு செல்லவும்",
+    system_operational: "கணினி இயங்குகிறது",
+    live_stream: "நேரலை தகவல்",
+    search_placeholder: "கிராமம் அல்லது மாவட்டம் தேடுக...",
+    call_emergency: "அவசர அழைப்பு (112)",
+    call_ndrf: "NDRF அழைப்பு (1078)",
+    weather_clear: "இயல்பான வானிலை",
+    weather_drizzle: "லேசான தூறல்",
+    weather_heavy: "கனமழை",
+    weather_critical: "கடும் வெள்ள அபாயம்",
+    demo_data_notice: "SIH 2026 மாதிரி தளம்",
+  },
+  te: {
+    brand_title: "హైడ్రో విజన్",
+    brand_subtitle: "AI వరద ముందస్తు హెచ్చరిక వ్యవస్థ",
+    nav_home: "హోమ్",
+    nav_live_map: "లైవ్ మ్యాప్",
+    nav_alerts: "హెచ్చరికలు",
+    nav_forecast: "వాతావరణ అంచనా",
+    nav_digital_twin: "డిజిటల్ ట్విన్",
+    nav_history: "చారిత్రక ధృవీకరణ",
+    nav_resources: "వనరులు (53)",
+    nav_admin: "అడ్మిన్ డాష్‌బోర్డ్",
+    nav_about: "మా గురించి",
+    persona_citizen: "పౌరుల మోడ్",
+    persona_authority: "అధికారుల మోడ్",
+    sos_button: "అత్యవసర SOS",
+    safe_to_drive: "ప్రయాణం సురక్షితం",
+    caution_drive: "జాగ్రత్తగా నడపండి",
+    dangerous_drive: "ప్రయాణించవద్దు",
+    nearest_shelter: "సమీప ఆశ్రయం",
+    recommended_route: "సురక్షిత మార్గం",
+    danger_near_you: "వరద ప్రమాదం",
+    area_safe: "మీ ప్రాంతం సురక్షితం",
+    be_alert: "అప్రమత్తంగా ఉండండి",
+    move_to_safety: "సురక్షిత ప్రాంతానికి వెళ్ళండి",
+    system_operational: "సిస్టమ్ పనిచేస్తోంది",
+    live_stream: "ప్రత్యక్ష శాటిలైట్ సమాచారం",
+    search_placeholder: "గ్రామం లేదా నగరం వెతకండి...",
+    call_emergency: "అత్యవసర కాల్ (112)",
+    call_ndrf: "NDRF కాల్ (1078)",
+    weather_clear: "సాధారణ వాతావరణం",
+    weather_drizzle: "తేలికపాటి జల్లులు",
+    weather_heavy: "భారీ వర్షం",
+    weather_critical: "తీవ్ర వరద హెచ్చరిక",
+    demo_data_notice: "SIH-2026 నమూనా ప్రాజెక్ట్",
+  },
+  mr: {
+    brand_title: "हायड्रो व्हिजन",
+    brand_subtitle: "एआय पूर आणि हवामान पूर्वसूचना प्रणाली",
+    nav_home: "मुख्यपृष्ठ",
+    nav_live_map: "थेट नकाशा",
+    nav_alerts: "सतर्कता",
+    nav_forecast: "अंदाज",
+    nav_digital_twin: "डिजिटल ट्विन",
+    nav_history: "ऐतिहासिक पडताळणी",
+    nav_resources: "संसाधने (53)",
+    nav_admin: "प्रशासन",
+    nav_about: "माहिती",
+    persona_citizen: "नागरिक मोड",
+    persona_authority: "अधिकारी मोड",
+    sos_button: "तातडीची मदत (SOS)",
+    safe_to_drive: "प्रवास सुरक्षित",
+    caution_drive: "सावधगिरीने चालवा",
+    dangerous_drive: "प्रवास टाळा",
+    nearest_shelter: "जवळचे निवारा केंद्र",
+    recommended_route: "शिफारस केलेला सुरक्षित मार्ग",
+    danger_near_you: "जवळ धोकादायक स्थिती",
+    area_safe: "तुमचा परिसर सुरक्षित आहे",
+    be_alert: "सतर्क राहा",
+    move_to_safety: "सुरक्षित स्थळी जा",
+    system_operational: "यंत्रणा कार्यरत आहे",
+    live_stream: "थेट उपग्रह माहिती",
+    search_placeholder: "गाव किंवा शहर शोधा...",
+    call_emergency: "आपत्कालीन कॉल (112)",
+    call_ndrf: "एनडीआरएफ कॉल (1078)",
+    weather_clear: "सामान्य हवामान",
+    weather_drizzle: "हलका पाऊस",
+    weather_heavy: "मुसळधार पाऊस",
+    weather_critical: "अतिवृष्टी व पूर धोका",
+    demo_data_notice: "SIH 2026 प्रोटोटाइप",
+  },
+  gu: {
+    brand_title: "હાઇડ્રો વિઝન",
+    brand_subtitle: "AI પૂર અને હવામાન ચેતવણી સિસ્ટમ",
+    nav_home: "હોમ",
+    nav_live_map: "લાઈવ નકશો",
+    nav_alerts: "ચેતવણીઓ",
+    nav_forecast: "આગાહી",
+    nav_digital_twin: "ડિજિટલ ટ્વીન",
+    nav_history: "ઐતિહાસિક ચકાસણી",
+    nav_resources: "સંસાધનો (53)",
+    nav_admin: "વહીવટી નિયંત્રણ",
+    nav_about: "અમારા વિશે",
+    persona_citizen: "નાગરિક મોડ",
+    persona_authority: "અધિકારી મોડ",
+    sos_button: "કટોકટી SOS",
+    safe_to_drive: "ડ્રાઇવ સુરક્ષિત છે",
+    caution_drive: "સાવચેતીથી વાહન ચલાવો",
+    dangerous_drive: "વાહન ન ચલાવશો",
+    nearest_shelter: "નજીકનું આશ્રયસ્થાન",
+    recommended_route: "સુરક્ષિત માર્ગ",
+    danger_near_you: "પૂરનું જોખમ",
+    area_safe: "તમારો વિસ્તાર સુરક્ષિત છે",
+    be_alert: "સાવધ રહો",
+    move_to_safety: "સુરક્ષિત સ્થળે ખસો",
+    system_operational: "સિસ્ટમ કાર્યરત છે",
+    live_stream: "લાઈવ સેટેલાઇટ ફીડ",
+    search_placeholder: "ગામ કે જિલ્લો શોધો...",
+    call_emergency: "કટોકટી કૉલ (112)",
+    call_ndrf: "NDRF કૉલ (1078)",
+    weather_clear: "સામાન્ય વાતાવરણ",
+    weather_drizzle: "હળવા વરસાદી છાંટા",
+    weather_heavy: "ભારે વરસાદ",
+    weather_critical: "અતિ ભારે પૂર જોખમ",
+    demo_data_notice: "SIH 2026 પ્રોટોટાઇપ",
+  },
+  as: {
+    brand_title: "হাইড্ৰ' ভিজন",
+    brand_subtitle: "এআই বানপানী আৰু বতৰ আগজাননী ব্যৱস্থা",
+    nav_home: "গৃহ",
+    nav_live_map: "লাইভ মেপ",
+    nav_alerts: "সতৰ্কবাৰ্তা",
+    nav_forecast: "বতৰৰ আগজাননী",
+    nav_digital_twin: "ডিজিটেল টুইন",
+    nav_history: "ঐতিহাসিক সত্যতা",
+    nav_resources: "উৎসসমূহ (53)",
+    nav_admin: "প্ৰশাসন",
+    nav_about: "আমাৰ বিষয়ে",
+    persona_citizen: "নাগৰিক মোড",
+    persona_authority: "কৰ্তৃপক্ষ মোড",
+    sos_button: "জৰুৰী SOS",
+    safe_to_drive: "যাতায়াত সুৰক্ষিত",
+    caution_drive: "সাৱধানে চলাওক",
+    dangerous_drive: "যাত্ৰা নকৰিব",
+    nearest_shelter: "নিকটৱৰ্তী আশ্ৰয় শিবিৰ",
+    recommended_route: "নিৰাপদ বাট",
+    danger_near_you: "বিপদৰ আশংকা",
+    area_safe: "আপোনাৰ এলেকা সুৰক্ষিত",
+    be_alert: "সতৰ্ক থাকক",
+    move_to_safety: "সুৰক্ষিত স্থানলৈ যাওক",
+    system_operational: "পদ্ধতি সক্ৰিয়",
+    live_stream: "লাইভ তথ্য",
+    search_placeholder: "গাঁও বা জিলা সন্ধান কৰক...",
+    call_emergency: "জৰুৰী কল (112)",
+    call_ndrf: "এনডিআৰএফ (1078)",
+    weather_clear: "স্বাভাৱিক বতৰ",
+    weather_drizzle: "পাতলীয়া বৰষুণ",
+    weather_heavy: "ধাৰাসাৰ বৰষুণ",
+    weather_critical: "ভয়াবহ বানৰ আশংকা",
+    demo_data_notice: "SIH 2026 প্ৰ'ট'টাইপ",
+  },
+  kn: {
+    brand_title: "ಹೈಡ್ರೋ ವಿಷನ್",
+    brand_subtitle: "AI ಪ್ರವಾಹ ಮತ್ತು ಹವಾಮಾನ ಮುನ್ನೆಚ್ಚರಿಕೆ",
+    nav_home: "ಮುಖಪುಟ",
+    nav_live_map: "ಲೈವ್ ನಕ್ಷೆ",
+    nav_alerts: "ಎಚ್ಚರಿಕೆಗಳು",
+    nav_forecast: "ಮುನ್ಸೂಚನೆ",
+    nav_digital_twin: "ಡಿಜಿಟಲ್ ಟ್ವಿನ್",
+    nav_history: "ಇತಿಹಾಸ ಪರಿಶೀಲನೆ",
+    nav_resources: "ಸಂಪನ್ಮೂಲಗಳು (53)",
+    nav_admin: "ಆಡಳಿತ ನಿಯಂತ್ರಣ",
+    nav_about: "ನಮ್ಮ ಬಗ್ಗೆ",
+    persona_citizen: "ನಾಗರಿಕ ಮೋಡ್",
+    persona_authority: "ಅಧಿಕಾರಿ ಮೋಡ್",
+    sos_button: "ತುರ್ತು SOS",
+    safe_to_drive: "ಚಾಲನೆ ಸುರಕ್ಷಿತ",
+    caution_drive: "ಎಚ್ಚರಿಕೆಯಿಂದ ಚಲಾಯಿಸಿ",
+    dangerous_drive: "ಚಲಾಯಿಸಬೇಡಿ",
+    nearest_shelter: "ಹತ್ತಿರದ ಆಶ್ರಯ ತಾಣ",
+    recommended_route: "ಶಿಫಾರಸು ಮಾಡಿದ ಸುರಕ್ಷಿತ ಮಾರ್ಗ",
+    danger_near_you: "ಪ್ರವಾಹದ ಅಪಾಯ",
+    area_safe: "ನಿಮ್ಮ ಪ್ರದೇಶ ಸುರಕ್ಷಿತವಾಗಿದೆ",
+    be_alert: "ಎಚ್ಚರವಾಗಿರಿ",
+    move_to_safety: "ಸುರಕ್ಷಿತ ಸ್ಥಳಕ್ಕೆ ತೆರಳಿ",
+    system_operational: "ವ್ಯವಸ್ಥೆ ಸಕ್ರಿಯವಾಗಿದೆ",
+    live_stream: "ಲೈವ್ ಉಪಗ್ರಹ ಮಾಹಿತಿ",
+    search_placeholder: "ಗ್ರಾಮ ಅಥವಾ ನಗರ ಹುಡುಕಿ...",
+    call_emergency: "ತುರ್ತು ಕರೆ (112)",
+    call_ndrf: "NDRF ಕರೆ (1078)",
+    weather_clear: "ಸಾಮಾನ್ಯ ಹವಾಮಾನ",
+    weather_drizzle: "ಲಘು ಮಳೆ",
+    weather_heavy: "ಭಾರೀ ಮಳೆ",
+    weather_critical: "ತೀವ್ರ ಪ್ರವಾಹ ಎಚ್ಚರಿಕೆ",
+    demo_data_notice: "SIH 2026 ಮಾದರಿ",
+  },
+  ml: {
+    brand_title: "ഹൈഡ്രോ വിഷൻ",
+    brand_subtitle: "AI പ്രളയ മുന്നറിയിപ്പ് സംവിധാനം",
+    nav_home: "ഹോം",
+    nav_live_map: "തത്സമയ മാപ്പ്",
+    nav_alerts: "മുന്നറിയിപ്പുകൾ",
+    nav_forecast: "കാലാവസ്ഥാ പ്രവചനം",
+    nav_digital_twin: "ഡിജിറ്റൽ ട്വിൻ",
+    nav_history: "ചരിത്ര സാധുത",
+    nav_resources: "വിഭവങ്ങൾ (53)",
+    nav_admin: "അഡ്മിൻ",
+    nav_about: "ഞങ്ങളെ കുറിച്ച്",
+    persona_citizen: "പൗരന്മാരുടെ മോഡ്",
+    persona_authority: "അധികാരികളുടെ മോഡ്",
+    sos_button: "അടിയന്തര SOS",
+    safe_to_drive: "യാത്ര സുരക്ഷിതമാണ്",
+    caution_drive: "ശ്രദ്ധയോടെ ഡ്രൈവ് ചെയ്യുക",
+    dangerous_drive: "യാത്ര ചെയ്യരുത്",
+    nearest_shelter: "അടുത്തുള്ള ദുരിതാശ്വാസ ക്യാമ്പ്",
+    recommended_route: "സുരക്ഷിത പാത",
+    danger_near_you: "അപകട സാധ്യത",
+    area_safe: "നിങ്ങളുടെ പ്രദേശം സുരക്ഷിതമാണ്",
+    be_alert: "ജാഗ്രത പാലിക്കുക",
+    move_to_safety: "സുരക്ഷിത സ്ഥാനത്തേക്ക് മാറുക",
+    system_operational: "സംവിധാനം പ്രവർത്തിക്കുന്നു",
+    live_stream: "തത്സമയ വിവരങ്ങൾ",
+    search_placeholder: "ഗ്രാമം അല്ലെങ്കിൽ ജില്ല തിരയുക...",
+    call_emergency: "അടിയന്തര വിളി (112)",
+    call_ndrf: "NDRF വിളി (1078)",
+    weather_clear: "സാധാരണ കാലാവസ്ഥ",
+    weather_drizzle: "ചെറിയ മഴ",
+    weather_heavy: "കനത്ത മഴ",
+    weather_critical: "തീവ്ര പ്രളയ മുന്നറിയിപ്പ്",
+    demo_data_notice: "SIH 2026 പ്രോട്ടോടൈപ്പ്",
+  },
+  pa: {
+    brand_title: "ਹਾਈਡ੍ਰੋ ਵਿਜ਼ਨ",
+    brand_subtitle: "ਏਆਈ ਹੜ੍ਹ ਅਤੇ ਮੌਸਮ ਚੇਤਾਵਨੀ ਪ੍ਰਣਾਲੀ",
+    nav_home: "ਮੁੱਖ ਸਫ਼ਾ",
+    nav_live_map: "ਲਾਈਵ ਨਕਸ਼ਾ",
+    nav_alerts: "ਚੇਤਾਵਨੀਆਂ",
+    nav_forecast: "ਪੂਰਵ ਅਨੁਮਾਨ",
+    nav_digital_twin: "ਡਿਜੀਟਲ ਟਵਿਨ",
+    nav_history: "ਇਤਿਹਾਸਕ ਪ੍ਰਮਾਣਿਕਤਾ",
+    nav_resources: "ਸਰੋਤ (53)",
+    nav_admin: "ਪ੍ਰਸ਼ਾਸਨ",
+    nav_about: "ਸਾਡੇ ਬਾਰੇ",
+    persona_citizen: "ਨਾਗਰਿਕ ਮੋਡ",
+    persona_authority: "ਅਧਿਕਾਰੀ ਮੋਡ",
+    sos_button: "ਐਮਰਜੈਂਸੀ SOS",
+    safe_to_drive: "ਸਫ਼ਰ ਸੁਰੱਖਿਅਤ ਹੈ",
+    caution_drive: "ਧਿਆਨ ਨਾਲ ਚਲਾਓ",
+    dangerous_drive: "ਸਫ਼ਰ ਨਾ ਕਰੋ",
+    nearest_shelter: "ਨੇੜਲਾ ਆਸਰਾ ਕੇਂਦਰ",
+    recommended_route: "ਸੁਰੱਖਿਅਤ ਰਸਤਾ",
+    danger_near_you: "ਖ਼ਤਰੇ ਦੀ ਚੇਤਾਵਨੀ",
+    area_safe: "ਤੁਹਾਡਾ ਖੇਤਰ ਸੁਰੱਖਿਅਤ ਹੈ",
+    be_alert: "ਸੁਚੇਤ ਰਹੋ",
+    move_to_safety: "ਸੁਰੱਖਿਅਤ ਥਾਂ ਜਾਓ",
+    system_operational: "ਸਿਸਟਮ ਚਾਲੂ ਹੈ",
+    live_stream: "ਲਾਈਵ ਡਾਟਾ",
+    search_placeholder: "ਪਿੰਡ ਜਾਂ ਜ਼ਿਲ੍ਹਾ ਲੱਭੋ...",
+    call_emergency: "ਐਮਰਜੈਂਸੀ ਕਾਲ (112)",
+    call_ndrf: "ਐਨਡੀਆਰਐਫ ਕਾਲ (1078)",
+    weather_clear: "ਆਮ ਮੌਸਮ",
+    weather_drizzle: "ਹਲਕੀ ਬਾਰਿਸ਼",
+    weather_heavy: "ਭਾਰੀ ਬਾਰਿਸ਼",
+    weather_critical: "ਭਿਆਨਕ ਹੜ੍ਹ ਖ਼ਤਰਾ",
+    demo_data_notice: "SIH 2026 ਪ੍ਰੋਟੋਟਾਈਪ",
+  },
+  ne: {
+    brand_title: "हाइड्रो भिजन",
+    brand_subtitle: "एआई बाढी तथा मौसम पूर्वसूचना प्रणाली",
+    nav_home: "गृहपृष्ठ",
+    nav_live_map: "प्रत्यक्ष नक्सा",
+    nav_alerts: "चेतावनी",
+    nav_forecast: "पूर्वानुमान",
+    nav_digital_twin: "डिजिटल जुम्ल्याहा",
+    nav_history: "ऐतिहासिक प्रमाणीकरण",
+    nav_resources: "स्रोतहरू (53)",
+    nav_admin: "प्रशासन",
+    nav_about: "हाम्रो बारेमा",
+    persona_citizen: "नागरिक मोड",
+    persona_authority: "अधिकारी मोड",
+    sos_button: "आपतकालीन SOS",
+    safe_to_drive: "यात्रा सुरक्षित छ",
+    caution_drive: "सावधानीपूर्वक चलाउनुहोस्",
+    dangerous_drive: "यात्रा नगर्नुहोस्",
+    nearest_shelter: "नजिकैको आश्रयस्थल",
+    recommended_route: "सिफारिस गरिएको सुरक्षित मार्ग",
+    danger_near_you: "बाढीको उच्च जोखिम",
+    area_safe: "तपाईंको क्षेत्र सुरक्षित छ",
+    be_alert: "सचेत रहनुहोस्",
+    move_to_safety: "सुरक्षित ठाउँमा जानुहोस्",
+    system_operational: "प्रणाली सक्रिय छ",
+    live_stream: "प्रत्यक्ष उपग्रह तथ्याङ्क",
+    search_placeholder: "गाउँ वा जिल्ला खोज्नुहोस्...",
+    call_emergency: "आपतकालीन कल (112)",
+    call_ndrf: "एनडीआरएफ कल (1078)",
+    weather_clear: "सामान्य मौसम",
+    weather_drizzle: "हल्का वर्षा",
+    weather_heavy: "भारी वर्षा",
+    weather_critical: "अत्यधिक बाढी जोखिम",
+    demo_data_notice: "SIH 2026 नमुना प्रणाली",
+  },
+};
+
+// ==========================================
+// 2. COMPLETE 53 RESOURCES PORTAL DATASET
+// 12 Guides, 18 Reports, 15 Training, 8 Toolkits
+// ==========================================
+export const RESOURCES_53: ResourceItem[] = [
+  {
+    id: 'guide-1',
+    title: 'Hydro Vision User Guide',
+    description: 'Complete user manual for using the Hydro Vision dashboard, Live Map, Alerts, Forecast, and Resource Center.',
+    category: 'guide',
+    format: 'PDF',
+    size: '4.2 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Emergency Preparedness',
+    methodology: 'Platform navigation architecture, sensor calibration, and alert response protocols.',
+    keyFindings: [
+      'Comprehensive walkthrough of citizen vs authority operational views.',
+      'How to interpret multi-tiered river gauge and radar rainfall alerts.',
+      'Mobile accessibility best practices for low-bandwidth village deployments.'
+    ]
+  },
+  {
+    id: 'guide-2',
+    title: 'Flash Flood Preparedness Guide',
+    description: 'Vital safety and preparedness instructions before, during, and after a high-velocity flash flood in mountain valleys.',
+    category: 'guide',
+    format: 'PDF',
+    size: '3.8 MB',
+    lastUpdated: 'July 2026',
+    hazardType: 'Flood',
+    keyFindings: [
+      'Early warning indicators: sudden water discolouration, rumble noises, and rapidly falling or rising river stages.',
+      'High-ground positioning protocol within 5 minutes of siren trigger.',
+      'Electrical isolation and safe drinking water sanitation guidelines.'
+    ]
+  },
+  {
+    id: 'guide-3',
+    title: 'Live Map User Manual',
+    description: 'Step-by-step instructions on understanding flood-risk zones, rainfall intensity, river levels, shelters, and roads.',
+    category: 'guide',
+    format: 'PDF',
+    size: '5.1 MB',
+    lastUpdated: 'June 2026',
+    hazardType: 'Flood',
+    keyFindings: [
+      'Layer navigation: switching between satellite, terrain, and hydrometeorological radar views.',
+      'Interpreting colored building risk footprints (Green, Yellow, Orange, Red).',
+      'Dynamic evacuation route calculation based on active flooded road closures.'
+    ]
+  },
+  {
+    id: 'guide-4',
+    title: 'Early Warning System Manual',
+    description: 'Explains national warning tiers (Normal, Watch, Warning, Emergency), trigger thresholds, and mandatory community actions.',
+    category: 'guide',
+    format: 'PDF',
+    size: '3.2 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    keyFindings: [
+      'CWC and IMD telemetry integration standards for flood warning dissemination.',
+      'Multi-channel siren, SMS, and WhatsApp broadcast triggers for remote hamlets.'
+    ]
+  },
+  {
+    id: 'guide-5',
+    title: 'Cloudburst Safety Guide',
+    description: 'Immediate defensive and emergency actions during localized extreme cloudburst events exceeding 100 mm/hour.',
+    category: 'guide',
+    format: 'PDF',
+    size: '2.9 MB',
+    lastUpdated: 'July 2026',
+    hazardType: 'Cloudburst',
+    keyFindings: [
+      'Immediate evacuation of dry ravine beds, gullies, and seasonal streams during intense downpours.',
+      'Identifying safe ridge paths versus debris flow channels in steep gradient slopes.'
+    ]
+  },
+  {
+    id: 'guide-6',
+    title: 'Landslide Safety Manual',
+    description: 'Explains landslide warning signs, high-risk saturated slopes, tension cracks, and prompt evacuation practices.',
+    category: 'guide',
+    format: 'PDF',
+    size: '4.5 MB',
+    lastUpdated: 'May 2026',
+    hazardType: 'Landslide',
+    keyFindings: [
+      'Recognizing ground movement: tilting trees, jammed doors, new water springs on hill slopes.',
+      'Do not cross active scree slopes or fresh landslide debris.'
+    ]
+  },
+  {
+    id: 'guide-7',
+    title: 'Monsoon Road Safety Handbook',
+    description: 'Guidelines for travelling safely during monsoon downpours, waterlogged underpasses, highway rockfalls, and aquaplaning.',
+    category: 'guide',
+    format: 'PDF',
+    size: '3.4 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Evacuation',
+    keyFindings: [
+      'Rule of 6 inches: 6 inches of moving floodwater can sweep away a passenger vehicle.',
+      'Checking Hydro Vision drive advisory before attempting hill highway transit.'
+    ]
+  },
+  {
+    id: 'guide-8',
+    title: 'Safe Evacuation Manual',
+    description: 'Detailed step-by-step guidance for moving vulnerable populations from valley floors to designated high-elevation shelters.',
+    category: 'guide',
+    format: 'PDF',
+    size: '3.9 MB',
+    lastUpdated: 'June 2026',
+    hazardType: 'Evacuation',
+    keyFindings: [
+      'Community buddy system for assisting elderly, persons with disabilities, and children.',
+      'Following pre-verified ridge lines instead of roadside drainage channels.'
+    ]
+  },
+  {
+    id: 'guide-9',
+    title: 'Shelter & Relief Centre Guide',
+    description: 'Explains shelter locations, capacity, available supplies, medical support, water availability, and accessibility for rural wards.',
+    category: 'guide',
+    format: 'PDF',
+    size: '3.1 MB',
+    lastUpdated: 'July 2026',
+    hazardType: 'Emergency Preparedness',
+    keyFindings: [
+      'Directory of vetted high-elevation government schools, community halls, and disaster relief centres.',
+      'Protocols for verifying remaining bed occupancy and medical supplies.'
+    ]
+  },
+  {
+    id: 'guide-10',
+    title: 'Emergency SOS Guide',
+    description: 'How to use Hydro Vision SOS features, automatic GPS broadcast, high-decibel siren alarm, and district control room connections.',
+    category: 'guide',
+    format: 'PDF',
+    size: '2.4 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Emergency Preparedness',
+    keyFindings: [
+      'Immediate 1-tap connection to National Helpline 112 and NDRF 1078.',
+      'Using audio distress sirens to attract search and rescue dog squads and boats.'
+    ]
+  },
+  {
+    id: 'guide-11',
+    title: 'Household Emergency Guide',
+    description: 'Checklist and preparation directives for keeping water, dry food, first aid, identity documents, and communication kits ready.',
+    category: 'guide',
+    format: 'PDF',
+    size: '2.7 MB',
+    lastUpdated: 'June 2026',
+    hazardType: 'Emergency Preparedness',
+    keyFindings: [
+      '72-hour family survival kit essentials: 3 litres water/person/day, high-calorie food, torches, waterproof document pouches.'
+    ]
+  },
+  {
+    id: 'guide-12',
+    title: 'Community Disaster Response Manual',
+    description: 'Disaster-response responsibilities, volunteer coordination, and emergency logistics for Gram Panchayats and volunteers.',
+    category: 'guide',
+    format: 'PDF',
+    size: '4.8 MB',
+    lastUpdated: 'May 2026',
+    hazardType: 'Emergency Preparedness',
+    keyFindings: [
+      'Establishing village emergency task forces: Early Warning, Search & Rescue, Shelter Management, and First Aid units.'
+    ]
+  },
+  // Reports 1-18
+  {
+    id: 'rep-1',
+    title: 'Hilly Region Flood Risk Assessment',
+    description: 'Comprehensive hydrological risk modeling of Indian Himalayan river catchments under shifting monsoon patterns.',
+    category: 'report',
+    format: 'PDF',
+    size: '8.4 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    methodology: 'Coupled hydrodynamic 2D shallow water equations with digital elevation models (10m resolution).',
+    keyFindings: [
+      'Peak surge velocity increases by 42% in narrow river gorges compared to plains.',
+      'Identified 64 high-risk village clusters along Bhagirathi, Alaknanda, and Beas corridors.'
+    ]
+  },
+  {
+    id: 'rep-2',
+    title: 'Flash Flood Vulnerability Report',
+    description: 'Socio-economic and physical vulnerability matrix of riverbank habitations across Uttarakhand and Himachal Pradesh.',
+    category: 'report',
+    format: 'PDF',
+    size: '6.2 MB',
+    lastUpdated: 'July 2026',
+    hazardType: 'Flood',
+    keyFindings: ['Over 34% of structures within 50m of riverbanks lack elevated foundations.']
+  },
+  {
+    id: 'rep-3',
+    title: 'Historical Flood Analysis (2013-2025)',
+    description: 'Empirical backtesting of major Indian flash floods, evaluating lead time, inundation levels, and loss drivers.',
+    category: 'report',
+    format: 'PDF',
+    size: '11.5 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    keyFindings: ['Multi-source sensor fusion provides average warning lead time of 4.2 hours over single-gauge monitoring.']
+  },
+  {
+    id: 'rep-4',
+    title: 'Rainfall Pattern Study',
+    description: 'Micro-catchment precipitation variability analysis using Doppler radar and automated weather stations in high altitudes.',
+    category: 'report',
+    format: 'PDF',
+    size: '5.9 MB',
+    lastUpdated: 'July 2026',
+    hazardType: 'Cloudburst',
+    keyFindings: ['Short-duration convective storms have increased in frequency by 28% over the past decade.']
+  },
+  {
+    id: 'rep-5',
+    title: 'Cloudburst Risk Analysis',
+    description: 'Identification of topographical cloudburst funnels and atmospheric instability precursors in Himalayan valleys.',
+    category: 'report',
+    format: 'PDF',
+    size: '7.1 MB',
+    lastUpdated: 'June 2026',
+    hazardType: 'Cloudburst',
+    keyFindings: ['Valley junctions with slope angles > 35° exhibit highest concentration of debris flow genesis.']
+  },
+  {
+    id: 'rep-6',
+    title: 'Landslide Susceptibility Study',
+    description: 'GIS-based multi-criteria evaluation of slope saturation, lithology, seismic history, and vegetation cover.',
+    category: 'report',
+    format: 'PDF',
+    size: '9.3 MB',
+    lastUpdated: 'July 2026',
+    hazardType: 'Landslide',
+    keyFindings: ['Rainfall accumulation above 120 mm in 48 hours triggers acute slope liquefaction in weathered schist zones.']
+  },
+  {
+    id: 'rep-7',
+    title: 'Terrain & Slope Analysis',
+    description: 'Digital Elevation Model (DEM) classification of steep gradient runoff rates and valley storage capacities.',
+    category: 'report',
+    format: 'PDF',
+    size: '6.8 MB',
+    lastUpdated: 'May 2026',
+    hazardType: 'Flood',
+    keyFindings: ['Runoff concentration time in upper Himalayan basins averages between 45 and 90 minutes.']
+  },
+  {
+    id: 'rep-8',
+    title: 'Water Level Analysis',
+    description: 'Ultrasonic and radar river gauge data comparison, sensor drift calibration, and discharge rating curve revisions.',
+    category: 'report',
+    format: 'PDF',
+    size: '4.9 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    keyFindings: ['Sub-millimeter radar sensors provide 99.4% uptime during heavy monsoonal silt loads.']
+  },
+  {
+    id: 'rep-9',
+    title: 'Rainfall–Flood Correlation Study',
+    description: 'Empirical regression between antecedent precipitation index (API), soil saturation, and downstream peak river stage.',
+    category: 'report',
+    format: 'PDF',
+    size: '5.4 MB',
+    lastUpdated: 'June 2026',
+    hazardType: 'Flood',
+    keyFindings: ['Soil moisture saturation above 85% reduces infiltration capacity by 78%, causing immediate surface runoff.']
+  },
+  {
+    id: 'rep-10',
+    title: 'Flood-Prone Area Mapping',
+    description: 'High-resolution flood hazard zonation maps delineating 10-year, 50-year, and 100-year inundation boundaries.',
+    category: 'report',
+    format: 'PDF',
+    size: '12.1 MB',
+    lastUpdated: 'July 2026',
+    hazardType: 'Flood',
+    keyFindings: ['Identified 184 critical road culverts requiring hydraulic capacity expansion.']
+  },
+  {
+    id: 'rep-11',
+    title: 'Road Flood Risk Study',
+    description: 'Vulnerability survey of national highways, bridges, culverts, and arterial village roads subject to flash flooding.',
+    category: 'report',
+    format: 'PDF',
+    size: '7.6 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Evacuation',
+    keyFindings: ['18% of primary hill highway bridges experience scouring when water levels exceed warning marks.']
+  },
+  {
+    id: 'rep-12',
+    title: 'Shelter Accessibility Study',
+    description: 'Network path analysis evaluating pedestrian travel times from high-risk habitations to designated shelters.',
+    category: 'report',
+    format: 'PDF',
+    size: '6.5 MB',
+    lastUpdated: 'May 2026',
+    hazardType: 'Evacuation',
+    keyFindings: ['82% of valley residents can reach safe elevation shelters within 25 minutes of early warning issuance.']
+  },
+  {
+    id: 'rep-13',
+    title: 'Evacuation Route Analysis',
+    description: 'Multi-criteria route reliability assessment under blocked road, landslide, and fast-flowing stream scenarios.',
+    category: 'report',
+    format: 'PDF',
+    size: '8.2 MB',
+    lastUpdated: 'June 2026',
+    hazardType: 'Evacuation',
+    keyFindings: ['Alternative secondary ridge trails offer 94% safety clearance compared to valley floor roads.']
+  },
+  {
+    id: 'rep-14',
+    title: 'Multi-Source Data Study',
+    description: 'Architectural evaluation of combining IoT river gauges, satellite soil moisture, IMD radar, and drone photogrammetry.',
+    category: 'report',
+    format: 'PDF',
+    size: '7.9 MB',
+    lastUpdated: 'July 2026',
+    hazardType: 'Flood',
+    keyFindings: ['Data fusion reduces false alarm rates from 18.2% to 4.1% compared to single-sensor algorithms.']
+  },
+  {
+    id: 'rep-15',
+    title: 'AI/ML Prediction Model Report',
+    description: 'Architecture and mathematical formulation of Hydro Vision neural hydrological forecasting network (LSTM-Transformer).',
+    category: 'report',
+    format: 'PDF',
+    size: '9.8 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    keyFindings: ['Deep neural architecture achieves 88.4% flash flood prediction accuracy with 3 to 6-hour horizons.']
+  },
+  {
+    id: 'rep-16',
+    title: 'Model Performance Report',
+    description: 'Evaluation metrics including Precision, Recall, F1 Score, Brier Score, and lead-time stability under heavy monsoon surges.',
+    category: 'report',
+    format: 'PDF',
+    size: '5.7 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    keyFindings: ['Recall of 91.2% ensures critical flood events are not missed by early warning sirens.']
+  },
+  {
+    id: 'rep-17',
+    title: 'Early Warning Evaluation Report',
+    description: 'Audit of warning dissemination speed, cellular push notifications, and community compliance during mock drills.',
+    category: 'report',
+    format: 'PDF',
+    size: '4.6 MB',
+    lastUpdated: 'June 2026',
+    hazardType: 'Emergency Preparedness',
+    keyFindings: ['Average warning dissemination time from anomaly detection to SMS/siren trigger: 48 seconds.']
+  },
+  {
+    id: 'rep-18',
+    title: 'Hydro Vision Impact & Future Scope Report',
+    description: 'Strategic roadmap for scaling Hydro Vision across all 12 Indian Himalayan states and Western Ghats corridors.',
+    category: 'report',
+    format: 'PDF',
+    size: '8.9 MB',
+    lastUpdated: 'August 2026',
+    hazardType: 'Emergency Preparedness',
+    keyFindings: [
+      'Projected reduction in rural infrastructure damage by up to 35% through proactive automated flood gating.',
+      'Roadmap for integrating low-cost satellite LoRa mesh networks for off-grid connectivity.'
+    ]
+  },
+  // Training 1-15
+  {
+    id: 'train-1',
+    title: 'Introduction to Flash Floods',
+    description: 'Fundamental course on flash flood causes, rapid runoff dynamics, and high-altitude weather triggers.',
+    category: 'training',
+    format: 'Interactive',
+    size: '15 mins',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    durationMinutes: 15,
+    modules: [
+      { id: 1, title: 'What is a Flash Flood?', content: 'A flash flood is a rapid rise of water along a stream or low-lying area, typically occurring within 6 hours of heavy rainfall or cloudbursts.' },
+      { id: 2, title: 'Mountain Valley Mechanics', content: 'Steep slopes and rocky surfaces prevent water absorption, funneling thousands of cubic meters of runoff into narrow gorges.' },
+      { id: 3, title: 'Initial Safety Protocols', content: 'Move immediately to high ground. Do not wait for instructions if you see water rising rapidly or turning muddy.' }
+    ],
+    quiz: [
+      { question: 'What is the primary indicator of an imminent flash flood in a mountain stream?', options: ['Sudden muddy water and rumbling sound', 'Slight breeze', 'Clear water flow', 'Temperature drop'], answerIndex: 0 },
+      { question: 'How much fast-moving flood water can sweep away a car?', options: ['2 feet', '6 inches', '1 foot', '5 feet'], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'train-2',
+    title: 'Hilly Region Hazard Training',
+    description: 'Comprehensive training module on multi-hazard scenarios combining cloudbursts, floods, and slope failures.',
+    category: 'training',
+    format: 'Interactive',
+    size: '20 mins',
+    lastUpdated: 'July 2026',
+    hazardType: 'Landslide',
+    durationMinutes: 20,
+    modules: [
+      { id: 1, title: 'Compound Hazards', content: 'In hilly regions, heavy rainfall often triggers flash floods and landslides simultaneously, cutting off escape roads.' },
+      { id: 2, title: 'Slope Assessment', content: 'Learn to identify unstable road embankments and avoid taking shelter beneath steep cut-slopes.' }
+    ],
+    quiz: [
+      { question: 'What compound hazard frequently accompanies flash floods in the hills?', options: ['Earthquakes', 'Landslides & debris flows', 'Tornadoes', 'Forest fires'], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'train-3',
+    title: 'Flood Early Warning Training',
+    description: 'Learn how to interpret Hydro Vision alert tiers, telemetry thresholds, and sound siren protocols.',
+    category: 'training',
+    format: 'Interactive',
+    size: '18 mins',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    durationMinutes: 18,
+    modules: [
+      { id: 1, title: 'Alert Tiers Explained', content: 'Green (Normal), Yellow (Watch - Monitor), Orange (Warning - Prepare Evacuation), Red (Critical - Evacuate Immediately).' },
+      { id: 2, title: 'Community Siren Codes', content: 'One continuous 2-minute siren means Orange Warning. Alternating pitch siren means Red Evacuation.' }
+    ],
+    quiz: [
+      { question: 'What does a RED alert indicate in Hydro Vision?', options: ['Normal monitoring', 'Prepare supplies', 'Evacuate immediately to safe shelter', 'Check weather tomorrow'], answerIndex: 2 }
+    ]
+  },
+  {
+    id: 'train-4',
+    title: 'Live Map Training Module',
+    description: 'Mastering the Hydro Vision GIS map: zooming into wards, reading building risk colors, and tracking river stations.',
+    category: 'training',
+    format: 'Interactive',
+    size: '25 mins',
+    lastUpdated: 'July 2026',
+    hazardType: 'Flood',
+    durationMinutes: 25,
+    modules: [
+      { id: 1, title: 'Navigating the Map', content: 'Use the State -> District -> Village -> Ward selector to zoom into your community.' },
+      { id: 2, title: 'Color Coded Infrastructure', content: 'Red buildings are in critical flood channels. Green buildings are situated on elevated safe ground.' }
+    ],
+    quiz: [
+      { question: 'How can you find your nearest shelter on the Live Map?', options: ['Filter by Shelter layer and click nearest green home icon', 'Zoom out to national view', 'Disable all layers', 'Search for hospitals'], answerIndex: 0 }
+    ]
+  },
+  {
+    id: 'train-5',
+    title: 'Flood Risk Zone Identification',
+    description: 'Practical guide to identifying alluvial fans, floodplains, low bridges, and river meander hazard zones.',
+    category: 'training',
+    format: 'Interactive',
+    size: '22 mins',
+    lastUpdated: 'June 2026',
+    hazardType: 'Flood',
+    durationMinutes: 22,
+    modules: [
+      { id: 1, title: 'Alluvial Fan Hazards', content: 'Alluvial fans at the base of ravines are prime paths for high-speed boulder flows during cloudbursts.' }
+    ],
+    quiz: [
+      { question: 'Which location is most dangerous during flash floods?', options: ['High ridge tops', 'Inside narrow river gorge bends', 'Paved plateau', 'School playground on hill top'], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'train-6',
+    title: 'Cloudburst Awareness Training',
+    description: 'Recognizing localized convective clouds, sudden barometric drops, and immediate rapid response tactics.',
+    category: 'training',
+    format: 'Interactive',
+    size: '15 mins',
+    lastUpdated: 'July 2026',
+    hazardType: 'Cloudburst',
+    durationMinutes: 15,
+    modules: [
+      { id: 1, title: 'Cloudburst Definition', content: 'Precipitation rate exceeding 100 mm per hour over a small geographical area of roughly 20-30 sq km.' }
+    ],
+    quiz: [
+      { question: 'What is the rainfall threshold for a certified cloudburst?', options: ['50 mm/day', '100 mm/hour', '25 mm/hour', '200 mm/week'], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'train-7',
+    title: 'Landslide Awareness Training',
+    description: 'Early warning indicators on hillsides: tree tilting, spring water cloudiness, tension cracks, and masonry bulging.',
+    category: 'training',
+    format: 'Interactive',
+    size: '20 mins',
+    lastUpdated: 'May 2026',
+    hazardType: 'Landslide',
+    durationMinutes: 20,
+    modules: [
+      { id: 1, title: 'Visual Signs of Failure', content: 'New cracks in building plaster, soil moving away from foundations, leaning telephone poles.' }
+    ],
+    quiz: [
+      { question: 'What should you do if you notice a fresh tension crack on a slope behind your house?', options: ['Fill it with cement', 'Evacuate immediately and alert authorities', 'Ignore it', 'Plant vegetables'], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'train-8',
+    title: 'Rainfall Data Training',
+    description: 'Understanding automated rain gauge (ARG) telemetry, mm/hr metrics, and rainfall accumulation graphs.',
+    category: 'training',
+    format: 'Interactive',
+    size: '18 mins',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    durationMinutes: 18,
+    modules: [
+      { id: 1, title: 'Intensity Classifications', content: 'Light (< 2.5 mm/hr), Moderate (2.5-7.5 mm/hr), Heavy (7.5-35 mm/hr), Very Heavy (35-100 mm/hr).' }
+    ],
+    quiz: [
+      { question: 'Which rainfall category poses immediate flash flood threat in hills?', options: ['Light rain', 'Moderate drizzle', 'Heavy and Very Heavy rain', 'Morning dew'], answerIndex: 2 }
+    ]
+  },
+  {
+    id: 'train-9',
+    title: 'Water-Level Monitoring Training',
+    description: 'Interpreting river gauge telemetry, normal levels, warning thresholds, and danger levels on live charts.',
+    category: 'training',
+    format: 'Interactive',
+    size: '20 mins',
+    lastUpdated: 'June 2026',
+    hazardType: 'Flood',
+    durationMinutes: 20,
+    modules: [
+      { id: 1, title: 'River Stages', content: 'Normal Level -> Warning Level (Bankfull flow) -> Danger Level (Overtopping banks).' }
+    ],
+    quiz: [
+      { question: 'When a river crosses its Danger Level, what action is mandatory?', options: ['Go boating', 'Immediate evacuation of low-lying floodplains', 'Take photographs', 'Turn off phones'], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'train-10',
+    title: 'Emergency Alert Response Training',
+    description: 'Standard operating procedures for village heads, disaster volunteers, and families upon receiving siren alerts.',
+    category: 'training',
+    format: 'Interactive',
+    size: '16 mins',
+    lastUpdated: 'July 2026',
+    hazardType: 'Emergency Preparedness',
+    durationMinutes: 16,
+    modules: [
+      { id: 1, title: 'Family Action Plan', content: 'Turn off cooking gas, disconnect main electricity switch, grab emergency kit, head to shelter.' }
+    ],
+    quiz: [
+      { question: 'Before evacuating your home, what utility must you shut off?', options: ['Electricity and cooking gas', 'Water tap only', 'WiFi router only', 'TV only'], answerIndex: 0 }
+    ]
+  },
+  {
+    id: 'train-11',
+    title: 'Shelter Identification Training',
+    description: 'How to verify shelter structural safety, elevation advantages, and capacity availability during emergencies.',
+    category: 'training',
+    format: 'Interactive',
+    size: '15 mins',
+    lastUpdated: 'May 2026',
+    hazardType: 'Evacuation',
+    durationMinutes: 15,
+    modules: [
+      { id: 1, title: 'Selecting Safe Shelters', content: 'Shelters must be situated at least 15 meters above maximum flood levels and away from rockfall zones.' }
+    ],
+    quiz: [
+      { question: 'Where should disaster shelters ideally be located in hilly regions?', options: ['On elevated ground away from ravines and unstable slopes', 'Beside the river bank', 'In low river basin basements', 'Near landslide scars'], answerIndex: 0 }
+    ]
+  },
+  {
+    id: 'train-12',
+    title: 'Safe Evacuation Route Training',
+    description: 'Simulating evacuation routing: identifying safe bridges, avoiding flooded underpasses, and selecting high-ridge trails.',
+    category: 'training',
+    format: 'Interactive',
+    size: '24 mins',
+    lastUpdated: 'August 2026',
+    hazardType: 'Evacuation',
+    durationMinutes: 24,
+    modules: [
+      { id: 1, title: 'Route Safety Criteria', content: 'Never cross flooded causeways or submerged culverts even if the water looks shallow.' }
+    ],
+    quiz: [
+      { question: 'Why does Hydro Vision prioritize safe routes over the shortest route?', options: ['To avoid flooded, blocked, and landslide-prone roads', 'To make people walk longer', 'To save map data', 'Random choice'], answerIndex: 0 }
+    ]
+  },
+  {
+    id: 'train-13',
+    title: 'Community Disaster Preparedness',
+    description: 'Conducting community mock drills, establishing village warning trees, and stocking relief medicines.',
+    category: 'training',
+    format: 'Interactive',
+    size: '25 mins',
+    lastUpdated: 'July 2026',
+    hazardType: 'Emergency Preparedness',
+    durationMinutes: 25,
+    modules: [
+      { id: 1, title: 'Early Warning Trees', content: 'Designate village messengers to alert deaf, elderly, or off-grid households.' }
+    ],
+    quiz: [
+      { question: 'What is the purpose of an emergency warning tree in a rural community?', options: ['To ensure 100% of households receive alerts even without mobile reception', 'To plant trees', 'To track rainfall', 'To test sirens'], answerIndex: 0 }
+    ]
+  },
+  {
+    id: 'train-14',
+    title: 'Emergency Response Team Training',
+    description: 'Advanced field search and rescue protocols, stretcher handling on steep slopes, and basic life support triage.',
+    category: 'training',
+    format: 'Interactive',
+    size: '30 mins',
+    lastUpdated: 'August 2026',
+    hazardType: 'Emergency Preparedness',
+    durationMinutes: 30,
+    modules: [
+      { id: 1, title: 'Triage and First Aid', content: 'Prioritize airway clearance, hemorrhage control, and hypothermia prevention during wet flood conditions.' }
+    ],
+    quiz: [
+      { question: 'What is the primary danger for rescued flood victims in cold hilly waters?', options: ['Hypothermia', 'Sunburn', 'Dehydration', 'Heat exhaustion'], answerIndex: 0 }
+    ]
+  },
+  {
+    id: 'train-15',
+    title: 'Hydro Vision Complete Training Handbook',
+    description: 'Comprehensive certification module encompassing all technical and community features of the Hydro Vision platform.',
+    category: 'training',
+    format: 'Interactive',
+    size: '45 mins',
+    lastUpdated: 'August 2026',
+    hazardType: 'Emergency Preparedness',
+    durationMinutes: 45,
+    modules: [
+      { id: 1, title: 'Master Certification', content: 'Integrates real-time map navigation, digital twin simulation analysis, AI chatbot queries, and administrative controls.' }
+    ],
+    quiz: [
+      { question: 'How does Hydro Vision achieve AI explainability in flood warnings?', options: ['It breaks down contributing factors: rainfall intensity, river level, soil moisture, and terrain elevation', 'It provides only a number', 'It uses random guessing', 'It does not explain'], answerIndex: 0 }
+    ]
+  },
+  // Toolkits 1-8
+  {
+    id: 'tool-1',
+    title: 'Flood Preparedness Toolkit',
+    description: 'Interactive home and community readiness checklist, pre-monsoon safety audit, and emergency contact directory.',
+    category: 'toolkit',
+    format: 'Checklist',
+    size: 'Interactive',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    checklistItems: [
+      { id: 'c1', text: 'Clean and inspect roof gutters and drainage paths around the house', completed: true },
+      { id: 'c2', text: 'Store 3 days of potable drinking water in sealed plastic containers', completed: true },
+      { id: 'c3', text: 'Keep family medical prescriptions and emergency first aid supplies updated', completed: true },
+      { id: 'c4', text: 'Identify nearest high-elevation shelter and verify safe walking route on Hydro Vision', completed: true },
+      { id: 'c5', text: 'Store land records, Aadhaar cards, and insurance papers in a waterproof pouch', completed: false },
+      { id: 'c6', text: 'Charge mobile phones and keep a verified 10,000 mAh power bank ready', completed: false },
+      { id: 'c7', text: 'Save local emergency numbers: 112 (National), 1078 (NDRF), 1077 (District Control)', completed: true }
+    ]
+  },
+  {
+    id: 'tool-2',
+    title: 'Flash Flood Response Toolkit',
+    description: 'Immediate action directives for the first 15 minutes of an unexpected water surge in mountain catchments.',
+    category: 'toolkit',
+    format: 'Checklist',
+    size: 'Interactive',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    checklistItems: [
+      { id: 'fr1', text: 'Disconnect main electrical breaker and shut off LPG cylinder valves', completed: true },
+      { id: 'fr2', text: 'Sound community whistle or gong to alert neighbouring households', completed: true },
+      { id: 'fr3', text: 'Move directly up the hill slope along pre-identified ridge lines', completed: true },
+      { id: 'fr4', text: 'Do NOT attempt to drive vehicles through water-covered causeways', completed: true },
+      { id: 'fr5', text: 'Check in with Gram Panchayat coordinator once safely at shelter', completed: false }
+    ]
+  },
+  {
+    id: 'tool-3',
+    title: 'Cloudburst Preparedness Toolkit',
+    description: 'Rapid diagnostic checklist for high-risk cloudburst funnels, rain gauge threshold tracking, and night-time alarms.',
+    category: 'toolkit',
+    format: 'Checklist',
+    size: 'Interactive',
+    lastUpdated: 'July 2026',
+    hazardType: 'Cloudburst',
+    checklistItems: [
+      { id: 'cb1', text: 'Monitor Hydro Vision live rainfall radar for rain intensities > 50 mm/hr', completed: true },
+      { id: 'cb2', text: 'Establish nocturnal alert watchmen during heavy monsoon thunderstorms', completed: true },
+      { id: 'cb3', text: 'Keep battery-powered megaphones charged and ready at village council hall', completed: false },
+      { id: 'cb4', text: 'Clear boulder obstructions from seasonal culverts before monsoons', completed: true }
+    ]
+  },
+  {
+    id: 'tool-4',
+    title: 'Landslide Risk Assessment Toolkit',
+    description: 'Field inspection checklist for evaluating slope stability, soil moisture saturation, and retaining wall distress.',
+    category: 'toolkit',
+    format: 'Checklist',
+    size: 'Interactive',
+    lastUpdated: 'July 2026',
+    hazardType: 'Landslide',
+    checklistItems: [
+      { id: 'ls1', text: 'Inspect hillside above home for new ground cracks or sunken depressions', completed: true },
+      { id: 'ls2', text: 'Check if spring water outflow has suddenly turned turbid or muddy', completed: false },
+      { id: 'ls3', text: 'Verify retaining walls are not bulging or shedding mortar', completed: true },
+      { id: 'ls4', text: 'Report any slope deformation to Hydro Vision hazard reporting portal', completed: false }
+    ]
+  },
+  {
+    id: 'tool-5',
+    title: 'Emergency Evacuation Toolkit',
+    description: 'Interactive route planning calculator, pedestrian travel time estimator, and shelter selection form.',
+    category: 'toolkit',
+    format: 'Checklist',
+    size: 'Interactive',
+    lastUpdated: 'August 2026',
+    hazardType: 'Evacuation',
+    checklistItems: [
+      { id: 'ev1', text: 'Confirm chosen evacuation route is classified GREEN (Safe) on Hydro Vision', completed: true },
+      { id: 'ev2', text: 'Avoid routes crossing Bridge 1 or low-lying river causeways during Orange/Red alerts', completed: true },
+      { id: 'ev3', text: 'Ensure elderly and mobility-impaired individuals are paired with designated helpers', completed: true },
+      { id: 'ev4', text: 'Pack emergency grab-bag with torch, whistle, high-energy food, and first aid kit', completed: true }
+    ]
+  },
+  {
+    id: 'tool-6',
+    title: 'Shelter Management Toolkit',
+    description: 'Administrative toolkit for logging shelter bed capacity, potable water levels, medical supplies, and sanitation.',
+    category: 'toolkit',
+    format: 'Checklist',
+    size: 'Interactive',
+    lastUpdated: 'June 2026',
+    hazardType: 'Emergency Preparedness',
+    checklistItems: [
+      { id: 'sm1', text: 'Register incoming evacuees and log vulnerable individuals (infants, elderly, pregnant women)', completed: true },
+      { id: 'sm2', text: 'Check chlorine dosage in overhead drinking water storage tanks', completed: true },
+      { id: 'sm3', text: 'Ensure diesel generator fuel is stocked for at least 48 hours of backup power', completed: true },
+      { id: 'sm4', text: 'Coordinate with local primary health centre for anti-venom, ORS, and dressing kits', completed: false }
+    ]
+  },
+  {
+    id: 'tool-7',
+    title: 'Community Disaster Response Toolkit',
+    description: 'Standard operating templates for volunteer rosters, emergency logistics dispatch, and relief distribution.',
+    category: 'toolkit',
+    format: 'Checklist',
+    size: 'Interactive',
+    lastUpdated: 'July 2026',
+    hazardType: 'Emergency Preparedness',
+    checklistItems: [
+      { id: 'cr1', text: 'Mobilize 4 community squads: Early Warning, Evacuation Assistance, First Aid, and Shelter Admin', completed: true },
+      { id: 'cr2', text: 'Establish two-way radio communication with District Disaster Management Authority', completed: true },
+      { id: 'cr3', text: 'Verify relief dry ration supply kits for up to 500 people for 7 days', completed: false }
+    ]
+  },
+  {
+    id: 'tool-8',
+    title: 'Hydro Vision Field Monitoring Toolkit',
+    description: 'Data entry and calibration forms for local sensor maintenance, rain gauge cleaning, and hazard verification.',
+    category: 'toolkit',
+    format: 'Checklist',
+    size: 'Interactive',
+    lastUpdated: 'August 2026',
+    hazardType: 'Flood',
+    checklistItems: [
+      { id: 'fm1', text: 'Clean tipping bucket rain gauge funnels of pine needles and debris weekly', completed: true },
+      { id: 'fm2', text: 'Inspect ultrasonic water level sensor transducer face for silt buildup', completed: true },
+      { id: 'fm3', text: 'Test LoRa / cellular transmission battery voltage and solar charging panels', completed: true },
+      { id: 'fm4', text: 'Upload ground-truth validation photographs to Hydro Vision sensor portal', completed: true }
+    ]
+  }
+];
+
+// ==========================================
+// 3. HISTORICAL FLOOD EVENTS (2013 - 2026)
+// ==========================================
+export const HISTORICAL_FLOOD_EVENTS: HistoricalFloodEvent[] = [
+  {
+    year: 2013,
+    name: 'Uttarakhand Kedarnath Deluge',
+    region: 'Mandakini & Bhagirathi Valleys',
+    state: 'Uttarakhand',
+    severity: 'Critical',
+    dateRange: '16–17 June 2013',
+    summary: 'Extreme multi-day precipitation combined with Chorabari glacial lake outburst triggered massive flash floods and debris torrents across Kedarnath, Rambara, and downstream valleys.',
+    actualRainfallMm: 385.0,
+    actualMaxRiverLevelM: 8.4,
+    actualAffectedVillages: 420,
+    actualWarningTimeHours: 1.2,
+    predictedRisk: 'Critical',
+    predictedProbabilityPercent: 96,
+    predictedLeadTimeHours: 5.5,
+    accuracyPercent: 91.8,
+    keyFindings: [
+      'Multi-source sensor replay demonstrates that antecedent rainfall saturation + rapid lake rise would have triggered Red Alert 5.5 hours prior to the main breach.',
+      'Sufficient lead time would have enabled orderly evacuation of Rambara and Gaurikund transit points.'
+    ],
+    actualExtentPolygon: [[30.73, 79.06], [30.71, 79.08], [30.68, 79.11], [30.62, 79.13]],
+    predictedExtentPolygon: [[30.74, 79.05], [30.71, 79.08], [30.67, 79.12], [30.61, 79.14]]
+  },
+  {
+    year: 2014,
+    name: 'Kashmir Valley Inundation',
+    region: 'Jhelum River Catchment',
+    state: 'Jammu & Kashmir',
+    severity: 'Critical',
+    dateRange: '3–8 September 2014',
+    summary: 'Torrential monsoonal rainfall caused the Jhelum River to breach embankments at multiple reaches, submerging Srinagar city and hundreds of surrounding villages.',
+    actualRainfallMm: 310.0,
+    actualMaxRiverLevelM: 7.2,
+    actualAffectedVillages: 512,
+    actualWarningTimeHours: 3.0,
+    predictedRisk: 'Critical',
+    predictedProbabilityPercent: 94,
+    predictedLeadTimeHours: 7.2,
+    accuracyPercent: 89.4,
+    keyFindings: [
+      'Hydro Vision neural backtest predicts Sangam and Munshi Bagh overflow 7.2 hours prior to physical dyke breach.',
+      'Recommended pre-emptive drainage gate activations along flood spill channels.'
+    ],
+    actualExtentPolygon: [[34.08, 74.80], [34.05, 74.83], [34.02, 74.85], [33.98, 74.90]],
+    predictedExtentPolygon: [[34.09, 74.79], [34.05, 74.83], [34.01, 74.86], [33.97, 74.91]]
+  },
+  {
+    year: 2015,
+    name: 'Chennai & Coastal Basin Floods',
+    region: 'Adyar & Cooum Basins',
+    state: 'Tamil Nadu',
+    severity: 'Critical',
+    dateRange: '1–4 December 2015',
+    summary: 'Record Northeast monsoon rainfall combined with Chembarambakkam reservoir release caused catastrophic urban and riverine flooding.',
+    actualRainfallMm: 494.0,
+    actualMaxRiverLevelM: 6.8,
+    actualAffectedVillages: 210,
+    actualWarningTimeHours: 2.5,
+    predictedRisk: 'Critical',
+    predictedProbabilityPercent: 98,
+    predictedLeadTimeHours: 8.0,
+    accuracyPercent: 93.2,
+    keyFindings: [
+      'Inflow volume predictions accurately anticipated reservoir capacity exhaustion 8 hours prior to emergency sluice gate opening.'
+    ],
+    actualExtentPolygon: [[13.08, 80.20], [13.04, 80.24], [13.00, 80.22]],
+    predictedExtentPolygon: [[13.09, 80.19], [13.03, 80.25], [12.99, 80.23]]
+  },
+  {
+    year: 2016,
+    name: 'Assam Brahmaputra Surge Wave',
+    region: 'Brahmaputra & Kaziranga Basin',
+    state: 'Assam',
+    severity: 'High',
+    dateRange: '20–29 July 2016',
+    summary: 'Severe monsoon flood waves engulfed over 3,000 villages across 28 districts and submerged 80% of Kaziranga National Park.',
+    actualRainfallMm: 240.0,
+    actualMaxRiverLevelM: 50.4,
+    actualAffectedVillages: 3200,
+    actualWarningTimeHours: 6.0,
+    predictedRisk: 'High',
+    predictedProbabilityPercent: 88,
+    predictedLeadTimeHours: 12.0,
+    accuracyPercent: 88.6,
+    keyFindings: ['Upstream river level gauge telemetry from Pasighat reliably predicted Guwahati surge waves with 12 hours lead time.'],
+    actualExtentPolygon: [[26.65, 93.20], [26.60, 93.35], [26.55, 93.50]],
+    predictedExtentPolygon: [[26.66, 93.18], [26.61, 93.36], [26.54, 93.52]]
+  },
+  {
+    year: 2017,
+    name: 'Gujarat & Rajasthan Riverine Floods',
+    region: 'Banaskantha & Luni Basins',
+    state: 'Gujarat',
+    severity: 'High',
+    dateRange: '22–27 July 2017',
+    summary: 'Unprecedented deep depression caused flash flooding across arid and semi-arid river basins of North Gujarat and Southwest Rajasthan.',
+    actualRainfallMm: 280.0,
+    actualMaxRiverLevelM: 5.6,
+    actualAffectedVillages: 310,
+    actualWarningTimeHours: 4.0,
+    predictedRisk: 'High',
+    predictedProbabilityPercent: 87,
+    predictedLeadTimeHours: 9.5,
+    accuracyPercent: 87.1,
+    keyFindings: ['Soil saturation index spiked rapidly in low-porosity clay soils, triggering surface runoff within 2 hours.'],
+    actualExtentPolygon: [[24.25, 72.10], [24.15, 72.25], [24.05, 72.35]],
+    predictedExtentPolygon: [[24.27, 72.08], [24.14, 72.26], [24.04, 72.36]]
+  },
+  {
+    year: 2018,
+    name: 'Kerala Great Monsoon Floods',
+    region: 'Periyar, Pamba & Bharathapuzha Basins',
+    state: 'Kerala',
+    severity: 'Critical',
+    dateRange: '8–19 August 2018',
+    summary: 'Continuous extreme downpours forced simultaneous opening of 35 dams, causing widespread inundation, landslides, and displacing over a million citizens.',
+    actualRainfallMm: 414.0,
+    actualMaxRiverLevelM: 7.9,
+    actualAffectedVillages: 1250,
+    actualWarningTimeHours: 3.5,
+    predictedRisk: 'Critical',
+    predictedProbabilityPercent: 97,
+    predictedLeadTimeHours: 11.0,
+    accuracyPercent: 94.1,
+    keyFindings: [
+      'Multi-reservoir cascade analysis by Hydro Vision model accurately forecasted Periyar basin inundation 11 hours ahead.',
+      'Identified critical bottlenecks at Aluva bridge and Chengannur lowlands.'
+    ],
+    actualExtentPolygon: [[10.10, 76.35], [10.05, 76.40], [9.95, 76.45], [9.85, 76.50]],
+    predictedExtentPolygon: [[10.12, 76.34], [10.04, 76.42], [9.94, 76.47], [9.84, 76.52]]
+  },
+  {
+    year: 2019,
+    name: 'Western Ghats & Maharashtra Floods',
+    region: 'Krishna & Panchganga Basins',
+    state: 'Maharashtra',
+    severity: 'Critical',
+    dateRange: '4–12 August 2019',
+    summary: 'Heavy rainfall in the catchments of Koyna, Radhanagari, and Almatti dams submerged Kolhapur, Sangli, and surrounding agricultural tracts.',
+    actualRainfallMm: 340.0,
+    actualMaxRiverLevelM: 16.8,
+    actualAffectedVillages: 780,
+    actualWarningTimeHours: 4.5,
+    predictedRisk: 'Critical',
+    predictedProbabilityPercent: 93,
+    predictedLeadTimeHours: 8.5,
+    accuracyPercent: 90.5,
+    keyFindings: ['Almatti backwater effect was accurately flagged by hydrodynamic backwater slope simulation.'],
+    actualExtentPolygon: [[16.70, 74.24], [16.65, 74.30], [16.55, 74.40]],
+    predictedExtentPolygon: [[16.72, 74.22], [16.64, 74.31], [16.54, 74.42]]
+  },
+  {
+    year: 2020,
+    name: 'Brahmaputra Flood Waves (Wave 3)',
+    region: 'Lower & Central Assam Basins',
+    state: 'Assam',
+    severity: 'High',
+    dateRange: '25 June – 15 July 2020',
+    summary: 'Prolonged high monsoonal discharge led to severe bank erosion, breaching secondary embankments across Barpeta, Morigaon, and Dhubri.',
+    actualRainfallMm: 290.0,
+    actualMaxRiverLevelM: 50.1,
+    actualAffectedVillages: 2800,
+    actualWarningTimeHours: 5.0,
+    predictedRisk: 'High',
+    predictedProbabilityPercent: 90,
+    predictedLeadTimeHours: 10.0,
+    accuracyPercent: 89.2,
+    keyFindings: ['Satellite synthetic aperture radar (SAR) flood extent matched Hydro Vision prediction with 89.2% spatial overlap.'],
+    actualExtentPolygon: [[26.30, 91.00], [26.25, 91.20], [26.20, 91.40]],
+    predictedExtentPolygon: [[26.31, 90.98], [26.24, 91.22], [26.19, 91.41]]
+  },
+  {
+    year: 2021,
+    name: 'Chamoli Glacier Rock-Ice Avalanche',
+    region: 'Rishi Ganga & Dhauli Ganga Valleys',
+    state: 'Uttarakhand',
+    severity: 'Critical',
+    dateRange: '7 February 2021',
+    summary: 'Ronti peak rock-ice avalanche generated a catastrophic hyper-concentrated debris flow that obliterated the Tapovan Vishnugad and Rishiganga hydel projects.',
+    actualRainfallMm: 12.0,
+    actualMaxRiverLevelM: 14.5,
+    actualAffectedVillages: 14,
+    actualWarningTimeHours: 0.25,
+    predictedRisk: 'Critical',
+    predictedProbabilityPercent: 91,
+    predictedLeadTimeHours: 1.8,
+    accuracyPercent: 88.0,
+    keyFindings: [
+      'Seismic and infrasound edge sensor fusion detected high-frequency ground vibrations 22 minutes ahead of surge arrival at Tapovan barrage.',
+      'Demonstrated need for multi-sensor seismic-acoustic triggers in glacial hazard monitoring.'
+    ],
+    actualExtentPolygon: [[30.48, 79.70], [30.45, 79.65], [30.42, 79.60]],
+    predictedExtentPolygon: [[30.49, 79.69], [30.44, 79.66], [30.41, 79.61]]
+  },
+  {
+    year: 2022,
+    name: 'Silchar Urban Flash Inundation',
+    region: 'Barak River & Bethukandi Dyke',
+    state: 'Assam',
+    severity: 'Critical',
+    dateRange: '19–26 June 2022',
+    summary: 'A breach in the Bethukandi dyke allowed Barak River floodwaters to enter Silchar town, stranding 300,000 urban citizens under 10 feet of water for over a week.',
+    actualRainfallMm: 360.0,
+    actualMaxRiverLevelM: 21.8,
+    actualAffectedVillages: 450,
+    actualWarningTimeHours: 1.5,
+    predictedRisk: 'Critical',
+    predictedProbabilityPercent: 95,
+    predictedLeadTimeHours: 6.0,
+    accuracyPercent: 92.4,
+    keyFindings: [
+      'Hydro Vision breach propagation model mapped street-level inundation velocity within 15 minutes of dyke failure.',
+      'Direct evacuation routing to high school multi-story structures would have saved vital supplies.'
+    ],
+    actualExtentPolygon: [[24.83, 92.77], [24.81, 92.80], [24.79, 92.83]],
+    predictedExtentPolygon: [[24.84, 92.76], [24.80, 92.81], [24.78, 92.84]]
+  },
+  {
+    year: 2023,
+    name: 'Himachal Beas & Mandi Cloudbursts',
+    region: 'Beas, Parbati & Ravi River Valleys',
+    state: 'Himachal Pradesh',
+    severity: 'Critical',
+    dateRange: '9–11 July 2023',
+    summary: 'Severe Western Disturbance coupled with monsoon trough produced intense multi-day cloudbursts, destroying bridges, highways, and sweeping away trucks in Kullu and Mandi.',
+    actualRainfallMm: 320.0,
+    actualMaxRiverLevelM: 8.9,
+    actualAffectedVillages: 580,
+    actualWarningTimeHours: 2.0,
+    predictedRisk: 'Critical',
+    predictedProbabilityPercent: 96,
+    predictedLeadTimeHours: 6.5,
+    accuracyPercent: 92.8,
+    keyFindings: [
+      'Bridge vulnerability warning triggered for Pandoh and Aut bridges 4.5 hours before peak discharge.',
+      'Road closure recommendations prevented passenger buses from entering flash flood gorges.'
+    ],
+    actualExtentPolygon: [[31.70, 76.93], [31.75, 76.98], [31.85, 77.05], [31.95, 77.10]],
+    predictedExtentPolygon: [[31.69, 76.92], [31.76, 76.99], [31.86, 77.06], [31.96, 77.11]]
+  },
+  {
+    year: 2024,
+    name: 'Wayanad Landslides & Debris Torrent',
+    region: 'Chooralmala, Meppadi & Mundakkai',
+    state: 'Kerala',
+    severity: 'Critical',
+    dateRange: '30 July 2024',
+    summary: 'Torrential downpour exceeding 572 mm in 48 hours triggered twin mega-landslides, destroying the villages of Chooralmala and Mundakkai with deep mud and boulder surges.',
+    actualRainfallMm: 572.0,
+    actualMaxRiverLevelM: 7.4,
+    actualAffectedVillages: 8,
+    actualWarningTimeHours: 1.0,
+    predictedRisk: 'Critical',
+    predictedProbabilityPercent: 98,
+    predictedLeadTimeHours: 5.2,
+    accuracyPercent: 95.0,
+    keyFindings: [
+      'Hydro Vision soil liquefaction index crossed critical threshold (96%) 5.2 hours before slope failure.',
+      'Early automated evacuation warning could have relocated over 400 families to Meppadi highland shelters.'
+    ],
+    actualExtentPolygon: [[11.53, 76.15], [11.51, 76.18], [11.48, 76.22]],
+    predictedExtentPolygon: [[11.54, 76.14], [11.50, 76.19], [11.47, 76.23]]
+  },
+  {
+    year: 2025,
+    name: 'North-East Pre-Monsoon Flash Flood',
+    region: 'Subansiri & Dikhow Basins',
+    state: 'Assam',
+    severity: 'High',
+    dateRange: '14–18 May 2025',
+    summary: 'Early monsoonal cyclonic depression caused flash floods across upper river basins, damaging culverts and inundating tea garden wards.',
+    actualRainfallMm: 215.0,
+    actualMaxRiverLevelM: 4.8,
+    actualAffectedVillages: 210,
+    actualWarningTimeHours: 3.5,
+    predictedRisk: 'High',
+    predictedProbabilityPercent: 89,
+    predictedLeadTimeHours: 7.0,
+    accuracyPercent: 88.5,
+    keyFindings: ['High-accuracy lead time enabled tea garden authorities to evacuate low-elevation labour lines.'],
+    actualExtentPolygon: [[27.05, 94.10], [27.00, 94.25], [26.95, 94.40]],
+    predictedExtentPolygon: [[27.06, 94.09], [26.99, 94.27], [26.94, 94.41]]
+  },
+  {
+    year: 2026,
+    name: 'Monsoon Horizon Active Replay',
+    region: 'Brahmaputra & Upper Ganga Catchments',
+    state: 'Assam / Uttarakhand',
+    severity: 'High',
+    dateRange: 'Active 2026 Season',
+    summary: 'Active operational monitoring of monsoon low-pressure systems with live Doppler radar assimilation and neural flow forecasts.',
+    actualRainfallMm: 168.0,
+    actualMaxRiverLevelM: 4.2,
+    actualAffectedVillages: 65,
+    actualWarningTimeHours: 4.0,
+    predictedRisk: 'High',
+    predictedProbabilityPercent: 91,
+    predictedLeadTimeHours: 8.0,
+    accuracyPercent: 91.5,
+    keyFindings: ['Continuous online learning updates neural weights every 60 minutes using real-time telemetry.'],
+    actualExtentPolygon: [[26.15, 91.70], [26.12, 91.75], [26.10, 91.80]],
+    predictedExtentPolygon: [[26.16, 91.69], [26.11, 91.76], [26.09, 91.81]]
+  }
+];
+
+// ==========================================
+// 4. SAMPLE VILLAGE & WARD GIS DATASET
+// Devprayag Sangam Village - Ward 04
+// ==========================================
+export const SAMPLE_VILLAGE_WARD: VillageWardData = {
+  id: 'village-devprayag-w4',
+  state: 'Uttarakhand',
+  district: 'Tehri Garhwal',
+  villageName: 'Devprayag Sangam Village',
+  wardName: 'Ward 04 - River Valley & Bridge Colony',
+  coordinates: [30.1458, 78.5986],
+  riskLevel: 'High',
+  rainfallMm: 98.4,
+  riverLevelM: 4.85,
+  soilMoisturePercent: 88,
+  population: 1840,
+  vulnerableCount: 265,
+  shelters: [
+    {
+      id: 'sh-dev-1',
+      name: 'Devprayag Govt Higher Secondary School (Highland)',
+      capacity: 350,
+      currentOccupancy: 110,
+      status: 'Open',
+      coordinates: [30.1485, 78.5960],
+      contact: '+91 94120 10781',
+      distanceKm: '1.2 km',
+      waterSupply: true,
+      medicalSupport: true,
+      electricity: true,
+      toilets: true,
+      foodAvailable: true,
+      elevationM: 580
+    },
+    {
+      id: 'sh-dev-2',
+      name: 'Community Relief Center & Mandir Hall',
+      capacity: 250,
+      currentOccupancy: 65,
+      status: 'Open',
+      coordinates: [30.1510, 78.5995],
+      contact: '+91 94120 10782',
+      distanceKm: '1.8 km',
+      waterSupply: true,
+      medicalSupport: false,
+      electricity: true,
+      toilets: true,
+      foodAvailable: true,
+      elevationM: 615
+    }
+  ],
+  roads: [
+    {
+      id: 'rd-main-ridge',
+      name: 'Ridge Highway Road (Safe Ridge Route)',
+      status: 'safe',
+      reason: 'Elevated ridge asphalt road, fully clear of river overflow.',
+      path: [[30.1450, 78.5970], [30.1470, 78.5965], [30.1485, 78.5960]]
+    },
+    {
+      id: 'rd-valley-ghat',
+      name: 'Lower Ghat Access Road (Flooded)',
+      status: 'blocked',
+      reason: 'Submerged under 1.4m of turbulent floodwater from rising Bhagirathi confluence.',
+      path: [[30.1440, 78.6000], [30.1455, 78.5995], [30.1465, 78.5990]]
+    },
+    {
+      id: 'rd-bridge-connector',
+      name: 'Old Suspension Bridge Approach (Risky)',
+      status: 'risky',
+      reason: 'Surface water pooling and high structural vibration as river reaches warning mark.',
+      path: [[30.1460, 78.5990], [30.1475, 78.5985], [30.1490, 78.5980]]
+    }
+  ],
+  buildings: [
+    {
+      id: 'bld-sch-1',
+      name: 'Devprayag Valley Public School',
+      type: 'school',
+      riskLevel: 'High',
+      elevationM: 475,
+      distanceToRiverM: 60,
+      coordinates: [30.1462, 78.5988],
+      occupancy: 180,
+      statusText: 'Evacuation Recommended',
+      actionRequired: 'Move students immediately along Ridge Road to Highland Govt School Shelter.',
+      reason: 'Building is situated in low-lying river terrace; water expected to touch boundary wall within 2 hours.'
+    },
+    {
+      id: 'bld-hosp-1',
+      name: 'Devprayag Primary Health Centre',
+      type: 'hospital',
+      riskLevel: 'Moderate',
+      elevationM: 520,
+      distanceToRiverM: 180,
+      coordinates: [30.1478, 78.5972],
+      occupancy: 45,
+      statusText: 'Operational (Emergency Standby)',
+      actionRequired: 'Move critical medical generators to upper floor; stand by for incoming trauma patients.',
+      reason: 'Hospital is 45m above water line, but road access could be threatened if approach road floods.'
+    },
+    {
+      id: 'bld-brg-1',
+      name: 'Sangam Suspension Bridge No. 1',
+      type: 'bridge',
+      riskLevel: 'Critical',
+      elevationM: 462,
+      distanceToRiverM: 5,
+      coordinates: [30.1450, 78.5998],
+      statusText: 'AT RISK - Traffic Blocked',
+      actionRequired: 'Completely closed for pedestrian and vehicular crossing by Police & SDRF.',
+      reason: 'River discharge 4.85m is touching girder clearance; floating debris impact hazard.'
+    },
+    {
+      id: 'bld-h1',
+      name: 'Residential House Cluster A (Lowland)',
+      type: 'house',
+      riskLevel: 'Critical',
+      elevationM: 465,
+      distanceToRiverM: 35,
+      coordinates: [30.1448, 78.5992],
+      occupancy: 28,
+      statusText: 'Immediate Evacuation Required',
+      actionRequired: 'Evacuate 6 households (28 residents, including 5 elderly) to Highland School.',
+      reason: 'Inundation imminent as river stage approaches 5.0m danger mark.'
+    },
+    {
+      id: 'bld-h2',
+      name: 'Residential House Cluster B (Mid-Slope)',
+      type: 'house',
+      riskLevel: 'Moderate',
+      elevationM: 510,
+      distanceToRiverM: 140,
+      coordinates: [30.1470, 78.5978],
+      occupancy: 36,
+      statusText: 'Be Alert & Monitor',
+      actionRequired: 'Keep emergency kits packed and avoid lower ghat paths.',
+      reason: 'Safe from direct river overflow; monitoring slope stability behind cluster.'
+    },
+    {
+      id: 'bld-h3',
+      name: 'Residential House Cluster C (High-Ridge)',
+      type: 'house',
+      riskLevel: 'Safe',
+      elevationM: 575,
+      distanceToRiverM: 320,
+      coordinates: [30.1492, 78.5962],
+      occupancy: 42,
+      statusText: 'Safe Zone',
+      actionRequired: 'No evacuation required; assist incoming evacuees.',
+      reason: 'Situated over 110m above maximum recorded flood levels on solid bedrock.'
+    },
+    {
+      id: 'bld-gauge-1',
+      name: 'CWC Telemetry Radar River Gauge - Devprayag',
+      type: 'river_gauge',
+      riskLevel: 'Critical',
+      elevationM: 460,
+      distanceToRiverM: 0,
+      coordinates: [30.1445, 78.6002],
+      statusText: 'Active Stream: 4.85m (Rising +0.35m/h)',
+      actionRequired: 'Automated 10-second satellite burst transmitting to Hydro Vision Neural Engine.',
+      reason: 'Gauge reading above Warning Level (4.0m), approaching Danger Level (5.0m).'
+    }
+  ]
+};
+
+// ==========================================
+// 5. DIGITAL TWIN SIMULATION TIMELINE (0h - 6h)
+// ==========================================
+export const DIGITAL_TWIN_STEPS: DigitalTwinSimStep[] = [
+  {
+    hourLabel: 'T+00:00 (Normal / Initial)',
+    rainfallMm: 18.0,
+    riverLevelM: 2.65,
+    atRiskBuildingsCount: 0,
+    bridgeStatus: 'Normal',
+    schoolEvacuation: false,
+    hospitalStatus: 'Operational',
+    floodedRoadIds: [],
+    recommendedShelterId: 'sh-dev-1'
+  },
+  {
+    hourLabel: 'T+01:00 (Heavy Rain Starts)',
+    rainfallMm: 42.5,
+    riverLevelM: 3.40,
+    atRiskBuildingsCount: 3,
+    bridgeStatus: 'Warning',
+    schoolEvacuation: false,
+    hospitalStatus: 'Operational',
+    floodedRoadIds: [],
+    recommendedShelterId: 'sh-dev-1'
+  },
+  {
+    hourLabel: 'T+02:00 (Warning Level Exceeded)',
+    rainfallMm: 68.0,
+    riverLevelM: 4.15,
+    atRiskBuildingsCount: 14,
+    bridgeStatus: 'Warning',
+    schoolEvacuation: true,
+    hospitalStatus: 'Operational',
+    floodedRoadIds: ['rd-valley-ghat'],
+    recommendedShelterId: 'sh-dev-1'
+  },
+  {
+    hourLabel: 'T+03:00 (Surge Approaches Confluence)',
+    rainfallMm: 98.4,
+    riverLevelM: 4.85,
+    atRiskBuildingsCount: 28,
+    bridgeStatus: 'At Risk',
+    schoolEvacuation: true,
+    hospitalStatus: 'Standby',
+    floodedRoadIds: ['rd-valley-ghat', 'rd-bridge-connector'],
+    recommendedShelterId: 'sh-dev-1'
+  },
+  {
+    hourLabel: 'T+04:00 (Danger Level Crossed)',
+    rainfallMm: 124.0,
+    riverLevelM: 5.25,
+    atRiskBuildingsCount: 43,
+    bridgeStatus: 'Submerged',
+    schoolEvacuation: true,
+    hospitalStatus: 'Standby',
+    floodedRoadIds: ['rd-valley-ghat', 'rd-bridge-connector'],
+    recommendedShelterId: 'sh-dev-2'
+  },
+  {
+    hourLabel: 'T+06:00 (Peak Flood Stage)',
+    rainfallMm: 156.0,
+    riverLevelM: 5.65,
+    atRiskBuildingsCount: 52,
+    bridgeStatus: 'Submerged',
+    schoolEvacuation: true,
+    hospitalStatus: 'At Risk',
+    floodedRoadIds: ['rd-valley-ghat', 'rd-bridge-connector'],
+    recommendedShelterId: 'sh-dev-2'
+  }
+];
